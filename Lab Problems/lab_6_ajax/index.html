@@ -19,8 +19,17 @@
     function loadData() {
       fetch('ajax_sample.json')
         .then(res => res.json())
-        .then(data => data.map(c => c.code))
-        .then(data => document.querySelector(".content").innerText = data);
+        .then(data => data.map(c => c.code)) // only one thing can be returned here, but you can use more than one property in it
+        .then(data => {
+          document.querySelector(".content").innerText = data
+
+          // you can do work here
+          // all the work from the function in lab 5
+          // that loads data into your HTML
+          return data; // you MUST return from a closed fat-arrow
+        })
+        .then(res => )
+        ;
     }
   </script>
 </body>
