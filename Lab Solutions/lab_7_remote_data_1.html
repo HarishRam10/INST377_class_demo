@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Bus Routes</title>
+  <link rel="stylesheet" type="text/css" href="./lab_styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="wrapper">
+      <div class="header">UMD Bus Routes</div>
+      <button class="button" onclick="loadData()">Load Some JSON</button>
+      <div class="content"></div>
+      <div class="footer"></div>
+    </div>
+  </div>
+  <script>
+    function loadData() {
+      fetch('https://api.umd.io/v0/bus/routes') // GET a new endpoint from api.umd.io
+        .then(res => res.json())
+        .then(data => { // part 1
+          console.log(data);
+          return data;
+        })
+        .then(data => { // Make array for use in list
+          const routeAndTitleArray = data.map(c => `${c.route_id} ${c.title}`);
+          makeListInHTML(routeAndTitleArray);
+
+          return data
+        })
+        .then(data => { // Rename bus route title to selected title
+          const htmlTarget = document.querySelector('.header');
+          const selectedRoute = data.find(f => f.route_id === '114'); // they can pick any route number
+          const newHeaderName = "UMD Bus Route " + selectedRoute.route_id + " " + selectedRoute.title;
+          // ALT: const newHeaderName = `UMD Bus Route ${selectedRoute.route_id} ${selectedRoute.title}`;
+
+          htmlTarget.innerText = newHeaderName;
+          return data;
+        })
+        .then(data => {
+          // INTENDED AS BONUS CODE FOR EXTRA POINTS
+          const routeAndTitleArray = data.map(c => {
+            let title = c.title;
+
+            if (title.includes(c.route_id)) {
+              const routePosition = title.indexOf(c.route_id);
+              const routeLength = routePosition + c.route_id.length + 1;
+              // the extra one is to account for the space in the route title
+              title = title.substr(routeLength, title.length);
+            }
+            return `${c.route_id} ${title}`
+          });
+
+          // updated to use non-redundant data
+          const selectedRoute = routeAndTitleArray.find(f => f.includes('114')); // they can pick any route number
+          const newHeaderName = `UMD Bus Route ${selectedRoute}`;
+          document.querySelector('.header').innerText = newHeaderName;
+
+          makeListInHTML(routeAndTitleArray);
+          return data;
+        })
+        .then(data => console.log(data));
+    }
+
+    function makeListInHTML(array) {
+      const htmlTarget = document.querySelector('.content');
+      htmlTarget.innerHTML = '';
+      let el1 = document.createElement("ul");
+      el1.className = 'list';
+      htmlTarget.appendChild(el1);
+
+      for (let i = 0; i < array.length; i++) {
+        let el = document.createElement("li");
+        el.innerText = array[i];
+        htmlTarget.appendChild(el);
+      };
+    }
+  </script>
+</body>
+
+</html>
